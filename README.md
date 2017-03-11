@@ -6,10 +6,15 @@ Here is an example of output using the file [test_prune_11.ttl](data/test_prune_
 
 ![example output](data/example_test_prune_11.png)
 
+Only the basic three PROV classes (Entity, Activity & Agent) are supported for now so for use with specialised classes such as prov:Plan or prov:Person, you will need to add the superclass type.
+
+Other classes such as prov:Association will be added eventually or on request!
+
 ### Using this repository
 
-### Software
+### Software requirements
 This repository works with Python 3.6 and the packages listed in [requirements.txt](requirements.txt).
+
 #### License 
 This code is supplied under a Creative Commons 4.0 license. See [LICENSE](LICENSE) for the specifics.
 
