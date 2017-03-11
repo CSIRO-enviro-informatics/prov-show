@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+    <title>PROV SVG</title>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='vis.js') }}"></script>
+    <link href="{{ url_for('static', filename='vis-network.min.css') }}" rel="stylesheet" type="text/css" />
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+
+
+    <style type="text/css">
+        #mynetwork {
+            width: 1000px;
+            height: 1000px;
+        }
+    </style>
+</head>
+<body>
+    <h1>vis.js rendering of PROV data</h1>
+    <div id="mynetwork"></div>
+
+    <script type="text/javascript">
+    {{ ne|safe }}
+
+        // create a network
+        var container = document.getElementById('mynetwork');
+            var data = {
+            nodes: nodes,
+            edges: edges
+        };
+
+        var options = {};
+        var network = new vis.Network(container, data, options);
+    </script>
+
+    <textarea style="width:1000px; min-height:300px;">
+        {{ prov }}
+    </textarea>
+
+</body>
+</html>

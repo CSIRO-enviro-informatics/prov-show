@@ -1,0 +1,20 @@
+# PROV SVG
+
+This small repository contains a tiny Python Flask project to render PROV ontology data as a nde and edge graph using Scalable Vector Graphics. The main toolkit used is the [vis.js](http://visjs.org/) JavaScript visualisation toolkit.
+
+
+### Using this repository
+
+#### License 
+This code is supplied under a Creative Commons 4.0 license. See [LICENSE](LICENSE) for the specifics.
+
+#### Citation
+If you would like to refer to this repository, please do so using the URI http://promsns.org/repo/prov-svg. A standard software repository citation might look like:
+
+> Car, N.J. (2017) PROV SVG. Code Repository using Git version control. Avalable online at http://promsns.org/repo/prov-svg, accessed yyyy-mm-dd.
+
+### Author
+**Nicholas Car**  
+Geoscience Australia  
+<nicholas.car@ga.gov.au>  
+<http://orcid.org/0000-0002-8742-7730>
