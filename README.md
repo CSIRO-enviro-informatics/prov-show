@@ -14,7 +14,7 @@ This code is supplied under a Creative Commons 4.0 license. See [LICENSE](LICENS
 #### Citation
 If you would like to refer to this repository, please do so using the URI http://promsns.org/repo/prov-svg. A standard software repository citation might look like:
 
-> Car, N.J. (2017) PROV SVG. Code Repository using Git version control. Avalable online at http://promsns.org/repo/prov-svg, accessed yyyy-mm-dd.
+> Car, N.J. (2017) PROV SVG. Python 3.6 Flask code Repository using Git version control. Available online at http://promsns.org/repo/prov-svg, accessed yyyy-mm-dd.
 
 ### Author
 **Nicholas Car**  
