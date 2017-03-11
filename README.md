@@ -8,6 +8,8 @@ Here is an example of output using the file [test_prune_11.ttl](data/test_prune_
 
 ### Using this repository
 
+### Software
+This repository works with Python 3.6 and the packages listed in [requirements.txt](requirements.txt).
 #### License 
 This code is supplied under a Creative Commons 4.0 license. See [LICENSE](LICENSE) for the specifics.
 
