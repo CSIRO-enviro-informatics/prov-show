@@ -2,6 +2,9 @@
 
 This small repository contains a tiny Python Flask project to render PROV ontology data as a nde and edge graph using Scalable Vector Graphics. The main toolkit used is the [vis.js](http://visjs.org/) JavaScript visualisation toolkit.
 
+Here is an example of output using the file [test_prune_11.ttl](data/test_prune_11.ttl):
+
+![example output](data/example_test_prune_11.png)
 
 ### Using this repository
 
