@@ -10,21 +10,21 @@ Only the basic three PROV classes (Entity, Activity & Agent) are supported for n
 
 Other classes such as prov:Association will be added eventually or on request!
 
-### Using this repository
+## Using this repository
 
-### Software requirements
+## Software requirements
 This repository works with Python 3.6 and the packages listed in [requirements.txt](requirements.txt).
 
-#### License 
+## License 
 This code is supplied under a Creative Commons 4.0 license. See [LICENSE](LICENSE) for the specifics.
 
-#### Citation
+## Citation
 If you would like to refer to this repository, please do so using the URI http://promsns.org/repo/prov-svg. A standard software repository citation might look like:
 
 > Car, N.J. (2017) PROV SVG. Python 3.6 Flask code Repository using Git version control. Available online at http://promsns.org/repo/prov-svg, accessed yyyy-mm-dd.
 
-### Author
+## Author
 **Nicholas Car**  
-Geoscience Australia  
-<nicholas.car@ga.gov.au>  
+*Senior Experimental Scientist*  
+<nicholas.car@csiro.au>  
 <http://orcid.org/0000-0002-8742-7730>
