@@ -7,19 +7,12 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/vis.js') }}"></script>
     <link href="{{ url_for('static', filename='css/vis-network.min.css') }}" rel="stylesheet" type="text/css" />
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
-
-    <style type="text/css">
-        #mynetwork {
-
-        }
-    </style>
 </head>
 <body>
-    <h1>PROV Show Result</h1>
     {% if error is not none %}
         <h2 style="color:red;">{{ error }}</h2>
     {% else %}
-        <div id="mynetwork" style="border:solid 1px black;"></div>
+        <div id="mynetwork"></div>
 
         <script type="text/javascript">
         {{ ne|safe }}
@@ -34,10 +27,6 @@
             var options = {};
             var network = new vis.Network(container, data, options);
         </script>
-
-        <textarea style="width:600px; min-height:300px;">
-            {{ prov }}
-        </textarea>
     {% endif %}
 </body>
 </html>

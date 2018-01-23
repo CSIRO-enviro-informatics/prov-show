@@ -32,10 +32,18 @@
         </table>
 
         <h3>2. Select a Filtering Strategy</h3>
-        <select id="strategy">
+        <select id="strategy" name="strategy">
             <option selected="selected" id="basic" value="basic">basic - PROV 3 basic classes only</option>
         </select>
-        <h3>3. <input id="visualise" type="submit" value="Visualise!" /></h3>
+        <h3>3. Select a result type</h3>
+        <select id="result_type" name="result_type">
+            <option selected="selected" id="svg" value="svg">SVG only</option>
+            <option selected="selected" id="web" value="web">web page</option>
+            <option selected="selected" id="rdf" value="rdf">RDF only</option>
+            <option selected="selected" id="img" value="img">PNG image</option>
+        </select>
+
+        <h3>4. <input id="visualise" type="submit" value="Visualise!" /></h3>
         <p id="input-error" style="color:red; font-style:italic; display:none;">You must either input RDF into the test area or upload an RDF file.</p>
     </form>
     <hr />
