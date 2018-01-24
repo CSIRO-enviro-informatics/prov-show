@@ -1,0 +1,23 @@
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://example.com/ex#> .
+
+:e1 a prov:Entity ;
+    rdfs:label "Entity 1" .
+
+:e2 a prov:Entity ;  # no label
+    prov:wasAttributedTo :ag1.
+
+:a1 a prov:Activity ;
+    prov:used :e1 ;
+    prov:generated :e2 ;
+    prov:wasAssociatedWith :ag1 .
+
+
+:ag1 a prov:Agent ;
+    rdfs:label "Agent 1" .
+
+
