@@ -26,17 +26,22 @@
 
             // create a network
             var container = document.getElementById('mynetwork');
-                var data = {
+            var data = {
                 nodes: nodes,
                 edges: edges
             };
+            var height = 450 + 10 * data.nodes.length;
+            container.style.height = height + 'px';
+            var width = 450 + 10 * data.nodes.length;
+            container.style.width = width + 'px';
+            //network.redraw();
 
             var options = {};
             var network = new vis.Network(container, data, options);
         </script>
 
         <textarea style="width:600px; min-height:300px;">
-            {{ prov }}
+            {{- prov }}
         </textarea>
     {% endif %}
 </body>

@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>PROV Show</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/csiro.css') }}" />
+</head>
+<body>
+    {% include 'csiro_header.html' %}
+    <div id="container-content">
+        <div id="container-content-2">
+            {% block content %}{% endblock %}
+        </div>
+	</div>
+	{% include 'csiro_footer.html' %}
+</body>
+</html>

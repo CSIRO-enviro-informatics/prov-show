@@ -1,19 +1,16 @@
-<!doctype html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <title>PROV SVG</title>
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}" charset="utf-8"></script>
-</head>
-<body>
-    <h1>PROV SVG</h1>
+{% extends "csiro_template.html" %}
+
+{% block content %}
+
+    <h1>PROV Show</h1>
+    <p>PROV Show is a small web application (this website) that lets you make visualisation of <a href="https://www.w3.org/RDF/">RDF</a> graphs that implement the <a href="https://www.w3.org/TR/prov-o/">PROV-O provenance ontology</a>.</p>
+    <p>To use this tool, enter your RDF data using the form below, select visualisation options and go! There are detailed instructions for use below the form in the 'How To' section.</p>
     <h2>Enter Data</h2>
     <form id="uploadForm" style="width:610px;" action="{{ url_for('show') }}" method="POST" enctype="multipart/form-data">
         <h3>1. Enter RDF data or upload an RDF file</h3>
         <table style="margin-top:-20px;">
             <tr>
-                <td>
+                <td style="display:block; width:600px;">
                     <h4>Enter RDF data:</h4>
                     <label for="copy_format">RDF Format:</label>&nbsp;
                     <select id="copy_format" name="copy_format">
@@ -21,7 +18,7 @@
                         <option value="xml">RDF/XML</option>
                         <option value="json-ld">JSON-LD</option>
                     </select><br />
-                    <textarea id="copy" name="copy" style="height:300px; width:600px;"></textarea><br />
+                    <textarea id="copy" name="copy" style="height:300px; width:580px;"></textarea><br />
                 </td>
                 <td style="vertical-align:top;">
                     <h4>Upload RDF file:</h4>
@@ -33,17 +30,21 @@
 
         <h3>2. Select a Filtering Strategy</h3>
         <select id="strategy" name="strategy">
-            <option selected="selected" id="basic" value="basic">basic - PROV 3 basic classes only</option>
-        </select>
+            <option selected="selected" id="basic" value="basic">basic</option>
+            <option id="entity" value="entity">entity only</option>
+        </select><br />
+        <span style="font-style:italic;">Only two strategies are implemented for now but more will appear soon. See the <a href="{{ url_for('strategiez') }}">strategies page</a> to further understand what filtering takes place.</span>
+
         <h3>3. Select a result type</h3>
         <select id="result_type" name="result_type">
-            <option selected="selected" id="svg" value="svg">SVG only</option>
             <option selected="selected" id="web" value="web">web page</option>
-            <option selected="selected" id="rdf" value="rdf">RDF only</option>
-            <option selected="selected" id="img" value="img">PNG image</option>
-        </select>
+            <option id="svg" value="svg">SVG only</option>
+            <option id="rdf" value="rdf">RDF only</option>
+            <option id="img" value="img">PNG image</option>
+        </select><br />
+        <span style="font-style:italic;">The default is to return a web page result with your image but you can also choose just an image (SVG or PNG) or you can just get the filtered RDf data.</span>
 
-        <h3>4. <input id="visualise" type="submit" value="Visualise!" /></h3>
+        <h3>4. just do it, <input id="visualise" type="submit" value="Visualise!" /></h3>
         <p id="input-error" style="color:red; font-style:italic; display:none;">You must either input RDF into the test area or upload an RDF file.</p>
     </form>
     <hr />
@@ -66,7 +67,7 @@
     </ol>
     <h3>Filtering strategies</h3>
     <p>This tool validates that your data is valid <a href="https://www.w3.org/TR/prov-o/">PROV-O</a> and then displays some subset of PROV-O classes and properties, or subclasses ans subproperties specialised from PROV-O, depending on the strategy you choose.</p>
-    <p>Current stategies are:</p>
+    <p>Current strategies are:</p>
     <ul>
         <li>
             <em>basic</em>
@@ -79,6 +80,7 @@
     <h3>Seeing results</h3>
     <p>Your results will be </p>
 
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}" charset="utf-8"></script>
     <script>
         // jQuery onLoad function
         $(function() {
@@ -101,5 +103,5 @@
             });
         });
     </script>
-</body>
-</html>
+
+{% endblock %}

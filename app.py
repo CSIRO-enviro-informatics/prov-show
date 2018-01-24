@@ -6,8 +6,8 @@ import strategies
 app = Flask(__name__, template_folder=conf.TEMPLATES_DIR, static_folder=conf.STATIC_DIR)
 
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
+@app.route('/')
+def home():
     return render_template(
         'form.html'
     )
@@ -16,11 +16,11 @@ def index():
 @app.route('/show', methods=['POST'])
 def show():
     # check for query string args:
-    #   result_type: one of ['png-image', 'svg-image', 'web-page', 'rdf'], default: 'web-page'
-    request.values.get('result_type') if request.values.get('result_type') else 'web'
+    #   result_type: one of ['png', 'svg', 'web', 'rdf'], default: 'web'
+    result_type = request.values.get('result_type') if request.values.get('result_type') else 'web'
 
     #   strategy: one of ['basic'], default: 'basic'
-    request.values.get('strategy') if request.values.get('strategy') else 'basic'
+    strategy = request.values.get('strategy') if request.values.get('strategy') else 'basic'
 
     # get the RDF data
     if 'multipart/form-data' in request.headers.get('Content-Type'):
@@ -83,66 +83,74 @@ def show():
         )
 
 
-def basic_make_nodes(g):
-    nodes = ''
-
-    q = '''
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX prov: <http://www.w3.org/ns/prov#>
-        SELECT *
-        WHERE {
-            ?s a ?o .
-            {?s a prov:Entity .}
-            UNION
-            {?s a prov:Activity .}
-            UNION
-            {?s a prov:Agent .}
-            ?s rdfs:label ?label .
-        }
-        '''
-    for row in g.query(q):
-        if str(row['o']) == 'http://www.w3.org/ns/prov#Entity':
-            nodes += '\t{id: "%(node_id)s", label: "%(label)s", shape: "ellipse", color:{background:"#FFFC87", border:"#808080"}},\n' % {
-                      'node_id': row['s'],
-                      'label': row['label']
-            }
-        elif str(row['o']) == 'http://www.w3.org/ns/prov#Activity':
-            nodes += '\t{id: "%(node_id)s", label: "%(label)s", shape: "box", color:{background:"#9FB1FC", border:"blue"}},\n' % {
-                      'node_id': row['s'],
-                      'label': row['label']
-            }
-        elif str(row['o']) == 'http://www.w3.org/ns/prov#Agent':
-            nodes += '\t{id: "%(node_id)s", label: "%(label)s", image: "/static/agent.png", shape: "image"},\n' % {
-                      'node_id': row['s'],
-                      'label': row['label']
-            }
-
-    return nodes
-
-
-def basic_make_edges(g):
-    edges = ''
-
-    q = '''
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX prov: <http://www.w3.org/ns/prov#>
-        SELECT *
-        WHERE {
-            ?s ?p ?o .
-            ?s prov:wasAttributedTo|prov:wasGeneratedBy|prov:used|prov:wasDerivedFrom|prov:wasInformedBy ?o .
-        }
-        '''
-    for row in g.query(q):
-        edges += '\t{from: "%(from)s", to: "%(to)s", arrows:"to", font: {align: "bottom"}, color:{color:"black"}, label: "%(relationship)s"},\n' % {
-            'from': row['s'],
-            'to': row['o'],
-            'relationship': str(row['p']).split('#')[1]
-        }
-
-    return edges
+@app.route('/strategies')
+def strategiez():
+    return render_template(
+        'strategies.html'
+    )
 
 
 def basic_make_nodes_edges(g):
+    def basic_make_nodes(g):
+        nodes = ''
+
+        q = '''
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            PREFIX prov: <http://www.w3.org/ns/prov#>
+            SELECT *
+            WHERE {
+                ?s a ?o .
+                {?s a prov:Entity .}
+                UNION
+                {?s a prov:Activity .}
+                UNION
+                {?s a prov:Agent .}
+                ?s rdfs:label ?label .
+            }
+            '''
+        for row in g.query(q):
+            if str(row['o']) == 'http://www.w3.org/ns/prov#Entity':
+                nodes += '\t{id: "%(node_id)s", label: "%(label)s", shape: "ellipse", ' \
+                         'color:{background:"#FFFC87", border:"#808080"}},\n' % {
+                    'node_id': row['s'],
+                    'label': row['label']
+                }
+            elif str(row['o']) == 'http://www.w3.org/ns/prov#Activity':
+                nodes += '\t{id: "%(node_id)s", label: "%(label)s", shape: "box", ' \
+                         'color:{background:"#9FB1FC", border:"blue"}},\n' % {
+                    'node_id': row['s'],
+                    'label': row['label']
+                }
+            elif str(row['o']) == 'http://www.w3.org/ns/prov#Agent':
+                nodes += '\t{id: "%(node_id)s", label: "%(label)s", image: "/static/img/agent.png", shape: "image"},\n' % {
+                    'node_id': row['s'],
+                    'label': row['label']
+                }
+
+        return nodes
+
+    def basic_make_edges(g):
+        edges = ''
+
+        q = '''
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            PREFIX prov: <http://www.w3.org/ns/prov#>
+            SELECT *
+            WHERE {
+                ?s ?p ?o .
+                ?s prov:wasAttributedTo|prov:wasGeneratedBy|prov:used|prov:wasDerivedFrom|prov:wasInformedBy ?o .
+            }
+            '''
+        for row in g.query(q):
+            edges += '\t{from: "%(from)s", to: "%(to)s", arrows:"to", font: {align: "bottom"}, ' \
+                     'color:{color:"black"}, label: "%(relationship)s"},\n' % {
+                'from': row['s'],
+                'to': row['o'],
+                'relationship': str(row['p']).split('#')[1]
+            }
+
+        return edges
+
     nodes = 'var nodes = new vis.DataSet([\n'
     nodes += basic_make_nodes(g)
     nodes = nodes.rstrip().rstrip(',') + '\n  ]);\n\n'
