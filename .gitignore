@@ -100,3 +100,6 @@ ENV/
 
 # Mac
 .DS_Store
+
+# pickle files
+*.pickle
