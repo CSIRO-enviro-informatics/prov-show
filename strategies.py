@@ -1,7 +1,10 @@
 import rdflib
+import pickle
+from os.path import join
+import _config as conf
 
 
-def apply_strategy(g, strategy):
+def apply_strategy(grf, strategy):
     """
     Receives an RDF graph and applies a filtering strategy to it
 
@@ -10,10 +13,14 @@ def apply_strategy(g, strategy):
     :return: an rdflib Graph (results of input with strategy applied)
     """
     if strategy == 'basic':
-        return apply_strategy_basic(g)
+        return apply_strategy_basic(grf)
 
 
-def apply_strategy_basic(g):
+def apply_strategy_basic(grf):
+    # add PROV-O to the supplied graph for reasoning
+    with open('prov-o.pickle', 'rb') as p:
+        grf += pickle.load(p)
+
     # flip any generated to wasGeneratedBy
     u = '''
         PREFIX prov: <http://www.w3.org/ns/prov#>
@@ -27,7 +34,7 @@ def apply_strategy_basic(g):
             ?a prov:generated ?e .
         }
     '''
-    g.update(u)
+    grf.update(u)
 
     # TODO: add in more inverses to point backwards here
 
@@ -44,7 +51,7 @@ def apply_strategy_basic(g):
             ?e rdf:type/(rdfs:subClassOf|owl:equivalentClass)* prov:Entity .
         }
     '''
-    g.update(u)
+    grf.update(u)
 
     # find all Activity subclasses and annotate them as Activity
     u = '''
@@ -59,7 +66,7 @@ def apply_strategy_basic(g):
             ?e rdf:type/(rdfs:subClassOf|owl:equivalentClass)* prov:Activity .
         }
     '''
-    g.update(u)
+    grf.update(u)
 
     # find all Agent subclasses and annotate them as Agent
     u = '''
@@ -74,7 +81,7 @@ def apply_strategy_basic(g):
             ?e rdf:type/(rdfs:subClassOf|owl:equivalentClass)* prov:Agent .
         }
     '''
-    g.update(u)
+    grf.update(u)
 
     # annotate every Entity, Activity & Agent with a label if it doesn't already have one
     u = '''
@@ -96,14 +103,15 @@ def apply_strategy_basic(g):
             BIND(STR(?n) AS ?str)
         }
     '''
-    g.update(u)
-    # for r in g.query(u):
+    grf.update(u)
+    # for r in grf.query(u):
     #     print(r)
 
     # TODO: snip off the last URI segment after '/' or '#' and make that the label, not the whole URI
 
     # check to see if we have a valid graph for display
     q = '''
+    PREFIX prov: <http://www.w3.org/ns/prov#>
     SELECT (COUNT(?n) AS ?cnt) 
     WHERE {
         { ?n a prov:Entity }
@@ -112,7 +120,7 @@ def apply_strategy_basic(g):
         UNION
         { ?n a prov:Agent }
     }'''
-    for r in g.query(q):
+    for r in grf.query(q):
         if int(r[0]) < 1:
             raise ValueError('the RDF you supplied, when filtered, using the basic strategy, did not produce '
                              'at least one Entity, Activity or Agent, Please ensure that class instances in your RDF'
@@ -120,7 +128,7 @@ def apply_strategy_basic(g):
                              'subclasses of them with the full subclass hierarchy defined.')
 
 
-def apply_strategy_entities_only(g):
+def apply_strategy_entities_only(grf):
     # find all Entity subclasses and annotate them as Entity
     u = '''
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -134,7 +142,7 @@ def apply_strategy_entities_only(g):
             ?e rdf:type/(rdfs:subClassOf|owl:equivalentClass)* prov:Entity .
         }
     '''
-    g.update(u)
+    grf.update(u)
 
     # find all Activity subclasses and annotate them as Activity
     u = '''
@@ -149,7 +157,7 @@ def apply_strategy_entities_only(g):
             ?e rdf:type/(rdfs:subClassOf|owl:equivalentClass)* prov:Activity .
         }
     '''
-    g.update(u)
+    grf.update(u)
 
     # replace any Entity <- Activity <- Entity chains with Entity <- Entity direct relationship
     u = '''
@@ -166,7 +174,7 @@ def apply_strategy_entities_only(g):
             {?a     prov:generated      ?e2 .}
         }
     '''
-    g.update(u)
+    grf.update(u)
 
     # TODO: add in other PROV-equivalent relationships for other qualified things like Associations
 
@@ -186,7 +194,7 @@ def apply_strategy_entities_only(g):
             BIND(STR(?n) AS ?str)
         }
     '''
-    g.update(u)
+    grf.update(u)
 
     # TODO: snip off the last URI segment after '/' or '#' and make that the label, not the whole URI
 
@@ -207,7 +215,7 @@ def apply_strategy_entities_only(g):
             ?x ?y ?s .
         }
     '''
-    g.update(u)
+    grf.update(u)
 
     u = '''
         PREFIX prov: <http://www.w3.org/ns/prov#>
@@ -223,7 +231,7 @@ def apply_strategy_entities_only(g):
             ?s ?p ?o .
         }
     '''
-    g.update(u)
+    grf.update(u)
 
     # check to see if we have a valid graph for display
     q = '''
@@ -231,7 +239,7 @@ def apply_strategy_entities_only(g):
     WHERE {
         ?n a prov:Entity
     }'''
-    for r in g.query(q):
+    for r in grf.query(q):
         if int(r[0]) < 1:
             raise ValueError('the RDF you supplied, when filtered, using the basic strategy, did not produce '
                              'at least one Entity, Activity or Agent, Please ensure that class instances in your RDF'
@@ -241,13 +249,20 @@ def apply_strategy_entities_only(g):
 
 if __name__ == '__main__':
     # run tests
-    # Basic
-    # g = rdflib.Graph().parse('_tests/test_basic_subclassing_labels.ttl', format='turtle')
-    # apply_strategy_basic(g)
-    # print(g.serialize(format='turtle').decode('utf-8'))
+    # make a graph of PROV-O, pickle it to emulate Flask app
+    po = rdflib.Graph(identifier=rdflib.URIRef('http://www.w3.org/ns/prov'))
+    po.load(join(conf.APP_DIR, '_config', 'prov-o.ttl'), format='turtle')
+    with open('prov-o.pickle', 'wb') as p:
+        pickle.dump(po, p)
 
-    # Entities only
-    g2 = rdflib.Graph().parse('_tests/test_entities_only.ttl', format='turtle')
-    apply_strategy_entities_only(g2)
-    print(g2.serialize(format='turtle').decode('utf-8'))
+    # Basic
+    grf = rdflib.Graph(identifier=rdflib.URIRef('http://example.org/data'))
+    grf.parse('_tests/test_basic.ttl', format='turtle')
+    apply_strategy_basic(grf)
+    print(grf.serialize(format='turtle').decode('utf-8'))
+
+    # # Entities only
+    # g2 = rdflib.Graph().parse('_tests/test_entities_only.ttl', format='turtle')
+    # apply_strategy_entities_only(g2)
+    # print(g2.serialize(format='turtle').decode('utf-8'))
 

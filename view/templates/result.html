@@ -1,20 +1,9 @@
-<!doctype html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <title>PROV Show</title>
+{% extends "csiro_template.html" %}
+
+{% block content %}
 
     <script type="text/javascript" src="{{ url_for('static', filename='js/vis.js') }}"></script>
     <link href="{{ url_for('static', filename='css/vis-network.min.css') }}" rel="stylesheet" type="text/css" />
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
-
-    <style type="text/css">
-        #mynetwork {
-
-        }
-    </style>
-</head>
-<body>
     <h1>PROV Show Result</h1>
     {% if error is not none %}
         <h2 style="color:red;">{{ error }}</h2>
@@ -44,5 +33,5 @@
             {{- prov }}
         </textarea>
     {% endif %}
-</body>
-</html>
+
+{% endblock %}

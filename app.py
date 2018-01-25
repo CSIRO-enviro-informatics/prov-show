@@ -1,9 +1,19 @@
 import _config as conf
+import pickle
+from os.path import join
 from flask import Flask, render_template, request, Response
 import rdflib
 import strategies
 
 app = Flask(__name__, template_folder=conf.TEMPLATES_DIR, static_folder=conf.STATIC_DIR)
+
+
+@app.before_first_request
+def load_prov():
+    # store a graph of PROV-O the first time this web app is used for future, repeated, use
+    grf = rdflib.Graph().load(join(conf.APP_DIR, '_config', 'prov-o.ttl'), format='turtle')
+    with open('prov-o.pickle', 'wb') as p:
+        pickle.dump(grf, p)
 
 
 @app.route('/')
@@ -63,12 +73,12 @@ def show():
     # try and make a graph, returning any errors to client
 
     try:
-        g = rdflib.Graph().parse(data=rdf_data, format=rdf_format)
+        grf = rdflib.Graph().parse(data=rdf_data, format=rdf_format)
 
         # if we are here, we have a valid RDf graph so now we can filter it, using the selected strategy
-        strategies.apply_strategy(g, strategy)
+        strategies.apply_strategy(grf, strategy)
 
-        return make_result_type(g, result_type, rdf_format)
+        return make_result_type(grf, result_type, rdf_format)
     except rdflib.plugins.parsers.notation3.BadSyntax as e:
         return Response(
             'There is an error parsing the RDF data you uploaded. The RDF parser said: ' + str(e),
@@ -90,8 +100,8 @@ def strategiez():
     )
 
 
-def basic_make_nodes_edges(g):
-    def basic_make_nodes(g):
+def basic_make_nodes_edges(grf):
+    def basic_make_nodes(grf):
         nodes = ''
 
         q = '''
@@ -108,7 +118,7 @@ def basic_make_nodes_edges(g):
                 ?s rdfs:label ?label .
             }
             '''
-        for row in g.query(q):
+        for row in grf.query(q):
             if str(row['o']) == 'http://www.w3.org/ns/prov#Entity':
                 nodes += '\t{id: "%(node_id)s", label: "%(label)s", shape: "ellipse", ' \
                          'color:{background:"#FFFC87", border:"#808080"}},\n' % {
@@ -129,7 +139,7 @@ def basic_make_nodes_edges(g):
 
         return nodes
 
-    def basic_make_edges(g):
+    def basic_make_edges(grf):
         edges = ''
 
         q = '''
@@ -141,7 +151,7 @@ def basic_make_nodes_edges(g):
                 ?s prov:wasAttributedTo|prov:wasGeneratedBy|prov:used|prov:wasDerivedFrom|prov:wasInformedBy ?o .
             }
             '''
-        for row in g.query(q):
+        for row in grf.query(q):
             edges += '\t{from: "%(from)s", to: "%(to)s", arrows:"to", font: {align: "bottom"}, ' \
                      'color:{color:"black"}, label: "%(relationship)s"},\n' % {
                 'from': row['s'],
@@ -152,11 +162,11 @@ def basic_make_nodes_edges(g):
         return edges
 
     nodes = 'var nodes = new vis.DataSet([\n'
-    nodes += basic_make_nodes(g)
+    nodes += basic_make_nodes(grf)
     nodes = nodes.rstrip().rstrip(',') + '\n  ]);\n\n'
 
     edges = 'var edges = new vis.DataSet([\n'
-    edges += basic_make_edges(g)
+    edges += basic_make_edges(grf)
     edges = edges.rstrip().rstrip(',') + '\n  ]);\n\n'
 
     return {
@@ -165,17 +175,17 @@ def basic_make_nodes_edges(g):
     }
 
 
-def basic_make_javascript(g):
-    ne = basic_make_nodes_edges(g)
+def basic_make_javascript(grf):
+    ne = basic_make_nodes_edges(grf)
     ne_str = ne.get('nodes')
     ne_str += '\n\n'
     ne_str += ne.get('edges')
     return ne_str
 
 
-def make_result_type(g, result_type, rdf_format):
+def make_result_type(grf, result_type, rdf_format):
     if result_type == 'rdf':
-        return Response(g.serialize(format=rdf_format), mimetype='text/plain')
+        return Response(grf.serialize(format=rdf_format), mimetype='text/plain')
     elif result_type == 'web' or result_type == 'img' or result_type == 'svg':
         # make the image
         img = ''
@@ -183,16 +193,16 @@ def make_result_type(g, result_type, rdf_format):
             return Response(img, mimetype='image/png')
         elif result_type == 'svg':
             return render_template(
-                'result-svg.html',
-                ne=basic_make_javascript(g),
-                prov=g.serialize(format=rdf_format).decode("utf-8"),
+                'result-svgrf.html',
+                ne=basic_make_javascript(grf),
+                prov=grf.serialize(format=rdf_format).decode("utf-8"),
                 error=None
             )
         else:  # result_type == 'web'
             return render_template(
                 'result.html',
-                ne=basic_make_javascript(g),
-                prov=g.serialize(format=rdf_format).decode("utf-8"),
+                ne=basic_make_javascript(grf),
+                prov=grf.serialize(format=rdf_format).decode("utf-8"),
                 error=None
             )
 
