@@ -3,21 +3,43 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix : <http://example.com/ex#> .
 
-:e1 a prov:Entity ;
-    rdfs:label "Entity 1" .
+# results should be:
+#   Entity e1, with a URI label
+#   Entity e2, with wasDerivedFrom :e1
+#   Plan p1, since it's a type of Entity
+#   Thing 2, since it's used, therefore and Entity
 
-:e2 a prov:Entity ;  # no label
-    prov:wasAttributedTo :ag1.
+:e1 a prov:Entity . # no label
 
+:e2 a prov:Entity ;  # linked only by an Activity and no attribution
+    rdfs:label "Entity 2" .
+
+# this Activity will not appear in results
 :a1 a prov:Activity ;
     prov:used :e1 ;
     prov:generated :e2 ;
     prov:wasAssociatedWith :ag1 .
 
-
+# this Agent will be ignored
 :ag1 a prov:Agent ;
     rdfs:label "Agent 1" .
 
+# this non-Entity will be ignored
+:th1 a owl:Thing ;
+    rdfs:label "Thing 1" .
 
+# this thing, because it is used, should be recognised as an Entity
+:th2 a owl:Thing ;
+    rdfs:label "Thing 2" .
+
+# this Activity will not appear in results
+:a2 a prov:Activity ;
+    prov:used :th2 .
+
+# this will be in the results as an Entity
+:p1
+    a prov:Plan ;
+    rdfs:label "Plan 1" .

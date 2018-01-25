@@ -1,19 +1,9 @@
 import _config as conf
-import pickle
-from os.path import join
 from flask import Flask, render_template, request, Response
 import rdflib
 import strategies
 
 app = Flask(__name__, template_folder=conf.TEMPLATES_DIR, static_folder=conf.STATIC_DIR)
-
-
-@app.before_first_request
-def load_prov():
-    # store a graph of PROV-O the first time this web app is used for future, repeated, use
-    grf = rdflib.Graph().load(join(conf.APP_DIR, '_config', 'prov-o.ttl'), format='turtle')
-    with open('prov-o.pickle', 'wb') as p:
-        pickle.dump(grf, p)
 
 
 @app.route('/')

@@ -3,29 +3,76 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix ex: <http://example.com/ex#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <http://example.com/ex#> .
+
+# results should be:
+#   Entity e1, used by Activity a1
+#   Entity e2, with wasDerivedFrom a1, with wasAttributedTo Agent ag1
+#   Activity a1, generated removed
+#   Plan p1, since it's a type of Entity
+#   SoftwareAgent sa1, since it's a type of Agent
+#   Activity a2, qualified association replaced with simple wasAssociatedWith
+#   Agents a1 & a2 untouched
+#   Thing th1 should not be in result as not an E/A/Ag subclass
 
 # generated -> wasGeneratedBy
-ex:a1
+:a1
     a prov:Activity ;
     rdfs:label "Activity 1" ;
-    prov:generated ex:e1 .
+    prov:generated :e2 ;
+    prov:wasAssociatedWith :ag1 .
+    
+:ag1
+    a prov:Agent ;
+    rdfs:label "Agent 1" .
 
-ex:e1
+:e1
     a prov:Entity ;
     rdfs:label "Entity 1" .
 
 # add in missing label
-ex:e2
+:e2
     a prov:Entity .
 
 # subclasses
-ex:p1
+:p1
     a prov:Plan ;
     rdfs:label "Plan 1" .
 
-ex:sa1
+:sa1
     a prov:SoftwareAgent ;
         rdfs:label "Software Agent 1" .
 
+# this non-Entity/Activity/Agent will be ignored
+:th1 a owl:Thing ;
+    rdfs:label "Thing 1" .
 
+# this thing, because it is used, should be recognised as an Entity
+:th2 a owl:Thing ;
+    rdfs:label "Thing 2" .
+
+# this Activity will not appear in results
+:a2 a prov:Activity ;
+    prov:used :th2 .
+
+# this non-Entity/Activity/Agent will be ignored
+:as1 a prov:Association ;
+    rdfs:label "Association 1" .
+
+# this Activity will have its Qualified Association simplified to just wasAssociatedWith
+:a3
+    a prov:Activity ;
+    rdfs:label "Activity 3" ;
+    prov:qualifiedAssociation [
+        a prov:Association;
+        prov:agent   :ag2;
+        prov:hadRole :creator ;
+    ] .
+
+:ag2
+    a prov:Agent ;
+    rdfs:label "Agent 2" .
+
+# this non-Entity/Activity/Agent will be ignored
+:creator a prov:Role .
