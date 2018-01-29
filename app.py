@@ -165,7 +165,7 @@ def basic_make_nodes_edges(grf):
     }
 
 
-def basic_make_javascript(grf):
+def make_visjs_javascript(grf):
     ne = basic_make_nodes_edges(grf)
     ne_str = ne.get('nodes')
     ne_str += '\n\n'
@@ -183,15 +183,15 @@ def make_result_type(grf, result_type, rdf_format):
             return Response(img, mimetype='image/png')
         elif result_type == 'svg':
             return render_template(
-                'result-svgrf.html',
-                ne=basic_make_javascript(grf),
+                'result-svg.html',
+                ne=make_visjs_javascript(grf),
                 prov=grf.serialize(format=rdf_format).decode("utf-8"),
                 error=None
             )
         else:  # result_type == 'web'
             return render_template(
-                'result.html',
-                ne=basic_make_javascript(grf),
+                'show.html',
+                ne=make_visjs_javascript(grf),
                 prov=grf.serialize(format=rdf_format).decode("utf-8"),
                 error=None
             )

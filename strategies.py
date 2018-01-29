@@ -10,8 +10,8 @@ def get_prov_o_graph():
         po = pickle.load(open('prov-o.pickle', 'rb'))
     else:
         po = rdflib.Graph()
-        po.load(os.path.join(conf.APP_DIR, '_config', 'prov-o.pickle'), format='turtle')
-        with open('prov-o.pickle', 'wb') as p:
+        po.load(os.path.join(conf.APP_DIR, '_config', 'prov-o.ttl'), format='turtle')
+        with open(os.path.join(conf.APP_DIR, 'prov-o.pickle'), 'wb') as p:
             pickle.dump(po, p)
 
     return po
@@ -123,6 +123,40 @@ def apply_strategy_basic(grf):
         }
         WHERE {
             ?e rdf:type/(rdfs:subClassOf|owl:equivalentClass)* prov:Agent .
+        }
+    '''
+    grf.update(u)
+
+    # ensure all things that are used/generated are understood to be Entities
+    u = '''
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#> 
+        PREFIX prov: <http://www.w3.org/ns/prov#>
+        INSERT {
+            ?e rdf:type prov:Entity .
+        }
+        WHERE {
+            {?a prov:used ?e .}
+            UNION
+            {?a prov:generated e .}
+        }
+    '''
+    grf.update(u)
+
+    # ensure all things that used or that generated are understood to be Activities
+    u = '''
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#> 
+        PREFIX prov: <http://www.w3.org/ns/prov#>
+        INSERT {
+            ?a rdf:type prov:Activity .
+        }
+        WHERE {
+            {?a prov:used ?e .}
+            UNION
+            {?a prov:generated e .}
         }
     '''
     grf.update(u)
