@@ -330,7 +330,7 @@ def apply_strategy_entities_only(grf):
         }
         WHERE {
             ?a      prov:used           ?e1 .
-            {?e2    prov:wasGeneratedby ?a  .}
+            {?e2    prov:wasGeneratedBy ?a  .}
             UNION
             {?a     prov:generated      ?e2 .}
         }
@@ -385,7 +385,6 @@ def apply_strategy_entities_only(grf):
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         DELETE {
             ?s ?p ?o .
-            ?o ?p2 ?o2 .
         }
         WHERE {
             ?s ?p ?o .
