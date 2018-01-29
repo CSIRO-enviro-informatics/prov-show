@@ -141,7 +141,7 @@ def apply_strategy_basic(grf):
         WHERE {
             {?a prov:used ?e .}
             UNION
-            {?a prov:generated e .}
+            {?a prov:generated ?e .}
         }
     '''
     grf.update(u)
@@ -158,7 +158,7 @@ def apply_strategy_basic(grf):
         WHERE {
             {?a prov:used ?e .}
             UNION
-            {?a prov:generated e .}
+            {?a prov:generated ?e .}
         }
     '''
     grf.update(u)
