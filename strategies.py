@@ -6,12 +6,14 @@ import _config as conf
 
 def get_prov_o_graph():
     # if we have a pickle, use it, if not, parse the text copy of the ont, return that graph and pickle it for future
-    if os.path.isfile(os.path.join(conf.APP_DIR, 'prov-o.pickle')):
-        po = pickle.load(open('prov-o.pickle', 'rb'))
+    prov_o_pickled = os.path.join(conf.APP_DIR, 'prov-o.pickle')
+    prov_o_text = os.path.join(conf.APP_DIR, '_config', 'prov-o.ttl')
+    if os.path.isfile(prov_o_pickled):
+        po = pickle.load(open(prov_o_pickled, 'rb'))
     else:
         po = rdflib.Graph()
-        po.load(os.path.join(conf.APP_DIR, '_config', 'prov-o.ttl'), format='turtle')
-        with open(os.path.join(conf.APP_DIR, 'prov-o.pickle'), 'wb') as p:
+        po.load(prov_o_text, format='turtle')
+        with open(prov_o_pickled, 'wb') as p:
             pickle.dump(po, p)
 
     return po
