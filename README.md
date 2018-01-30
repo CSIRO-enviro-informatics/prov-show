@@ -40,10 +40,11 @@ This application will supply a number of selectable filtering strategies, any of
     
 For full documentation for the strategies, see the /strategies web page delivered by the application or view the [strategies.py](strategies.py) file in this repository.
 
-## Using this repository
-
-## Software requirements
+### Software requirements
 This repository works with Python 3.6 and the packages listed in [requirements.txt](requirements.txt).
+
+### Testing
+There are files containing example data for testing each strategy in [_test/](_test). Each pair of testing data files is named *test_<strategy_name>.ttl* and *test_<strategy_name>_result.ttl* with the former file containing notes in comments about what the strategy should do to the data. 
 
 ## License 
 This code is supplied under a Creative Commons 4.0 license. See [LICENSE](LICENSE) for the specifics.

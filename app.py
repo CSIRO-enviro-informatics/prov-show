@@ -67,6 +67,7 @@ def show():
 
         # if we are here, we have a valid RDf graph so now we can filter it, using the selected strategy
         grf = strategies.apply_strategy(grf, strategy)
+        print(grf)
 
         return make_result_type(grf, result_type, rdf_format)
     except rdflib.plugins.parsers.notation3.BadSyntax as e:

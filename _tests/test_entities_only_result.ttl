@@ -1,0 +1,18 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.com/ex#e1> a <http://www.w3.org/ns/prov#Entity> ;
+    rdfs:label "http://example.com/ex#e1" .
+
+<http://example.com/ex#e2> a <http://www.w3.org/ns/prov#Entity> ;
+    rdfs:label "Entity 2" .
+
+<http://example.com/ex#p1> a <http://www.w3.org/ns/prov#Entity>,
+        <http://www.w3.org/ns/prov#Plan> ;
+    rdfs:label "Plan 1" .
+
+<http://example.com/ex#th2> a <http://www.w3.org/2002/07/owl#Thing>,
+        <http://www.w3.org/ns/prov#Entity> ;
+    rdfs:label "Thing 2" .

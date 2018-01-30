@@ -1,0 +1,53 @@
+@prefix ns1: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.com/ex#a2> a ns1:Activity ;
+    rdfs:label "http://example.com/ex#a2" ;
+    ns1:used <http://example.com/ex#th2> .
+
+<http://example.com/ex#a3> a ns1:Activity ;
+    rdfs:label "Activity 3" ;
+    ns1:wasAssociatedWith <http://example.com/ex#ag2> .
+
+<http://example.com/ex#e1> a ns1:Entity ;
+    rdfs:label "Entity 1" .
+
+<http://example.com/ex#e2> a ns1:Entity ;
+    rdfs:label "http://example.com/ex#e2" ;
+    ns1:wasAttributedTo <http://example.com/ex#ag1> ;
+    ns1:wasGeneratedBy <http://example.com/ex#a1> .
+
+<http://example.com/ex#e4> a ns1:Entity ;
+    rdfs:label "Entity 4" ;
+    ns1:wasGeneratedBy [ a ns1:Activity ;
+            rdfs:label "N71763a61f26a4feaaffb75cd26a9de9f" ;
+            ns1:used <http://example.com/ex#e3> ] .
+
+<http://example.com/ex#p1> a ns1:Entity,
+        ns1:Plan ;
+    rdfs:label "Plan 1" .
+
+<http://example.com/ex#sa1> a ns1:Agent,
+        ns1:SoftwareAgent ;
+    rdfs:label "Software Agent 1" .
+
+<http://example.com/ex#a1> a ns1:Activity ;
+    rdfs:label "Activity 1" ;
+    ns1:wasAssociatedWith <http://example.com/ex#ag1> .
+
+<http://example.com/ex#ag2> a ns1:Agent ;
+    rdfs:label "Agent 2" .
+
+<http://example.com/ex#e3> a ns1:Entity ;
+    rdfs:label "Entity 3" .
+
+<http://example.com/ex#th2> a <http://www.w3.org/2002/07/owl#Thing>,
+        ns1:Entity ;
+    rdfs:label "Thing 2" .
+
+<http://example.com/ex#ag1> a ns1:Agent ;
+    rdfs:label "Agent 1" .
+
