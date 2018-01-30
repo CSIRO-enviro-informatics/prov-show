@@ -76,3 +76,14 @@
 
 # this non-Entity/Activity/Agent will be ignored
 :creator a prov:Role .
+
+# this is used by e4
+:e3
+    a prov:Entity ;
+    rdfs:label "Entity 3" .
+
+# this will be linked to e3 with a blank node Activity between
+:e4
+    a prov:Entity ;
+    rdfs:label "Entity 4" ;
+    prov:wasDerivedFrom :e3 .

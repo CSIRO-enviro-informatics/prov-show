@@ -4,14 +4,16 @@
 
     <h1>PROV Show</h1>
     <h2>Strategies</h2>
-    <p>On RDF data upload to PROV Show, a selected strategy is applied to RDF data before visualisation which either removes or adds RDF data to/from the graph to allow for certain types of visualisation. For example, the <em>basic</em> strategy adds <code>wasGeneratedBy</code> relationship whenever it encounters <code>generated</code> relationships (i.e. <code>A generated B</code> becomes <code>B wasGeneratedby A</code> with the two properties being defined as inverse in PROV-O) so that all arrows in a visualised node network grapb point backwards in time.</p>
-    <p>The following strategies are currently implemented with more in the way:</p>
+    <p>When RDF data is upload to PROV Show, a selected strategy is applied to it before visualisation which either removes or adds RDF data to/from the graph to allow for certain types of visualisation. For example, the <em>basic</em> strategy adds <code>wasGeneratedBy</code> relationship whenever it encounters <code>generated</code> relationships (i.e. <code>A generated B</code> becomes <code>B wasGeneratedBy A</code> with the two properties being defined as inverse in PROV-O) so that all arrows in a visualised node network graph point backwards in time.</p>
+    <p>Where objects do not have an <code>rdfs:label</code> property, a label is made from it's URI. This applied to blank nodes too.</p>
+    <p>The actual code used for each strategy is available in <a href="http://github.com/nicholascar/prov-show">GitHub repository</a>.</p>
+    <p>The following strategies are currently implemented with more on the way:</p>
     <h3>Basic</h3>
-    <p>This <em>basic</em> strategy is the default. It performs the following actions on uploaded data:</p>
+    <p>This <em>basic</em> strategy is the default. It aims to represent simple <code>Entity</code>, <code>Activity</code> &amp; <code>Agent</code> classes of object with basic relationships only. It performs the following actions on uploaded data:</p>
     <ul>
         <li>find all subclasses of <code>Entity</code>, <code>Activity</code> &amp; <code>Agent</code> and treat them as just <code>Entity</code>, <code>Activity</code> &amp; <code>Agent</code> objects</li>
         <li>
-            add <code>Activity</code> classes between any <code>Entities</code> that indicate derivation
+            add anonymous (blank node) <code>Activity</code> classes between any <code>Entities</code> that indicate derivation
             <ul>
                 <li>i.e. if <code>&lt;B&gt; wasDerivedFrom &lt;A&gt;</code> is indicated, the following RDF is added:
                     <ul>
@@ -29,15 +31,16 @@
         </li>
     </ul>
 
-    <h3>Entity only</h3>
-    <p>This strategy removes every thing from uploaded RDf data other than <code>Entities</code>. Specifically it will:</p>
+    <h3>Entities only</h3>
+    <p>This strategy removes everything from uploaded RDF data other than <code>Entities</code> and builds relationships between <code>Entities</code> where it can reason about them from other relationships. Specifically it will:</p>
     <ul>
         <li>find all subclasses of <code>Entity</code> and treat them as just as <code>Entities</code></li>
-        <li>remove all <code>Activity</code> &amp; <code>Agent</code> classes, and subclasses of them</li>
+        <li>interpret objects that were <code>used</code> or <code>wasGeneratedBy</code> <code>Activities</code> or <code>wasAttributedTo</code> <code>Agents</code> as <code>Entities</code></li>
+        <li>remove all objects of classes other than <code>Entity</code></li>
         <li>
             add <code>wasDerivedFrom</code> relationships between <code>Entities</code> that are indicated as being related through <code>Activities</code>
             <ul>
-                <li>i.e., <code>&lt;B&gt; wasGeneratedBy &lt;AnonymousActivity&gt;</code> , <code>&lt;AnonymousActivity&gt; used &lt;A&gt;</code> &#10230; <code>&lt;B&gt; wasDerivedFrom& &lt;A&gt;</code></li>
+                <li>i.e., <code>&lt;B&gt; wasGeneratedBy &lt;AnonymousActivity&gt;</code> , <code>&lt;AnonymousActivity&gt; used &lt;A&gt;</code> &#10230; <code>&lt;B&gt; wasDerivedFrom &lt;A&gt;</code></li>
             </ul>
         </li>
     </ul>

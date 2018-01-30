@@ -51,6 +51,23 @@ def apply_strategy_basic(grf):
     '''
     grf.update(u)
 
+    # add Activities between any Entities indicating derivation
+    u = '''
+        PREFIX prov: <http://www.w3.org/ns/prov#>
+        DELETE {
+            ?e2 prov:wasDerivedFrom ?e1 .
+        }
+        INSERT {
+            _:a a prov:Activity .            
+            _:a prov:used ?e1 .
+            ?e2 prov:wasGeneratedBy _:a .
+        }
+        WHERE {
+            ?e2 prov:wasDerivedFrom ?e1 .
+        }
+    '''
+    grf.update(u)
+
     # indicate Entity attribution
     u = '''
         PREFIX prov: <http://www.w3.org/ns/prov#>
@@ -198,15 +215,16 @@ def apply_strategy_basic(grf):
 
     # check to see if we have a valid graph for display
     q = '''
-    PREFIX prov: <http://www.w3.org/ns/prov#>
-    SELECT (COUNT(?n) AS ?cnt) 
-    WHERE {
-        { ?n a prov:Entity }
-        UNION
-        { ?n a prov:Activity }
-        UNION
-        { ?n a prov:Agent }
-    }'''
+        PREFIX prov: <http://www.w3.org/ns/prov#>
+        SELECT (COUNT(?n) AS ?cnt) 
+        WHERE {
+            { ?n a prov:Entity }
+            UNION
+            { ?n a prov:Activity }
+            UNION
+            { ?n a prov:Agent }
+        }
+    '''
     for r in grf.query(q):
         if int(r[0]) < 1:
             raise ValueError('the RDF you supplied, when filtered, using the basic strategy, did not produce '
@@ -265,6 +283,21 @@ def apply_strategy_entities_only(grf):
         WHERE {
             ?a prov:used ?x .
             ?y prov:wasGeneratedBy ?a2 .
+        }
+    '''
+    grf.update(u)
+
+    # class anything that wasAttributedTo and Agent as an Entity (duck-typing)
+    u = '''
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#> 
+        PREFIX prov: <http://www.w3.org/ns/prov#>
+        INSERT {
+            ?x a prov:Entity .
+        }
+        WHERE {
+            ?x prov:wasAttributedTo ?ag .
         }
     '''
     grf.update(u)
@@ -365,11 +398,12 @@ def apply_strategy_entities_only(grf):
 
     # check to see if we have a valid graph for display
     q = '''
-    PREFIX prov: <http://www.w3.org/ns/prov#>
-    SELECT (COUNT(?n) AS ?cnt) 
-    WHERE {
-        ?n a prov:Entity
-    }'''
+        PREFIX prov: <http://www.w3.org/ns/prov#>
+        SELECT (COUNT(?n) AS ?cnt) 
+        WHERE {
+            ?n a prov:Entity
+        }
+    '''
     for r in grf.query(q):
         if int(r[0]) < 1:
             raise ValueError('the RDF you supplied, when filtered, using the basic strategy, did not produce '
@@ -386,8 +420,8 @@ if __name__ == '__main__':
 
     # Basic
     grf = rdflib.Graph()
-    grf.parse('_tests/test_entities_only.ttl', format='turtle')
-    strategy = 'entities_only'
+    grf.parse('_tests/test_basic.ttl', format='turtle')
+    strategy = 'basic'
 
     print(apply_strategy(grf, strategy).serialize(format='turtle').decode('utf-8'))
 

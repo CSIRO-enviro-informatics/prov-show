@@ -52,33 +52,26 @@
     <h2>How To</h2>
     <p>Overall, you need to:</p>
     <ol>
-        <li>Paste in or Upload your RDF data</li>
-        <li>Select a graph filtering strategy</li>
-        <li>Hit Visualise! and see your results</li>
-    </ol>
-    <p>Currently only one strategy is available - "basic" which visualises the three basic PROV classes - while this system is in test but more will appear soon.</p>
-
-    <h3>Uploading Data</h3>
-    <p>There are 3 ways to load PROV-O data into this application for visualisation:</p>
-    <ol>
-        <li>Copy 'n Paste your RDF data into text box in the Upload Form above</li>
-        <li>Select an RDF file on your computer & upload it using the Upload Fom above</li>
-        <li>Post (HTTP POST) your RDF data with an RDF content type to this endpoint</li>
-    </ol>
-    <h3>Filtering strategies</h3>
-    <p>This tool validates that your data is valid <a href="https://www.w3.org/TR/prov-o/">PROV-O</a> and then displays some subset of PROV-O classes and properties, or subclasses ans subproperties specialised from PROV-O, depending on the strategy you choose.</p>
-    <p>Current strategies are:</p>
-    <ul>
         <li>
-            <em>basic</em>
+            Paste in, Upload or HTTP POST your RDF data
             <ul>
-                <li>This strategy reduces your data down to PROV-O <code>Activity</code>, <code>Agent</code> &amp <code>Entity</code> class objects only and <code>wasGeneratedBy</code>, <code>used</code>, <code>wasAttributedTo</code> and other basic object properties and one or two data properties (<code>rdfs:label</code>, <code>prov:value</code> etc.) and displays only that.</li>
+                <li>if POSTing, do so directly to the receiving endpoint: <code>{{ request.url[:-1] }}{{ url_for('show') }}</code></li>
             </ul>
         </li>
-    </ul>
-
-    <h3>Seeing results</h3>
-    <p>Your results will be </p>
+        <li>
+            Select a graph filtering strategy
+            <ul>
+                <li>There are several to choose from and they are all documented on the <a href="{{ url_for('strategiez') }}">Strategies Page</a>.</li>
+            </ul>
+        </li>
+        <li>
+            Choose your results format
+            <ul>
+                <li>You can choose from a web page including the graphics, an image or the raw, filtered RDF results</li>
+            </ul>
+        </li>
+        <li>Hit Visualise!</li>
+    </ol>
 
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}" charset="utf-8"></script>
     <script>
