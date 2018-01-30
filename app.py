@@ -62,14 +62,12 @@ def show():
     # to get here we must have both an rdf_data and an rdf_format value
     # try and make a graph, returning any errors to client
 
+    grf = None
     try:
         grf = rdflib.Graph().parse(data=rdf_data, format=rdf_format)
 
         # if we are here, we have a valid RDf graph so now we can filter it, using the selected strategy
         grf = strategies.apply_strategy(grf, strategy)
-        print(grf)
-
-        return make_result_type(grf, result_type, rdf_format)
     except rdflib.plugins.parsers.notation3.BadSyntax as e:
         return Response(
             'There is an error parsing the RDF data you uploaded. The RDF parser said: ' + str(e),
@@ -82,6 +80,8 @@ def show():
             status=400,
             mimetype='text/plain'
         )
+
+    return make_result_type(grf, result_type, rdf_format)
 
 
 @app.route('/strategies')
