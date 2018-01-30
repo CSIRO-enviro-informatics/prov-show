@@ -327,7 +327,7 @@ def apply_strategy_entities_only(grf):
         }
         WHERE {
             ?a      prov:used           ?e1 .
-            {?e2    prov:wasGeneratedby ?a  .}
+            {?e2    prov:wasGeneratedBy ?a  .}
             UNION
             {?a     prov:generated      ?e2 .}
         }
